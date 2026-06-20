@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="build/icon.png">
+  <title>Shibaiinu Engine - 使い方ガイド</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Segoe UI", sans-serif;
+      line-height: 1.8;
+      background: #fafafa;
+      color: #333;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .logo {
+      display: block;
+      max-width: 200px;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      color: #e67e22;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      border-bottom: 3px solid #e67e22;
+      padding-bottom: 0.5rem;
+    }
+    h2 {
+      color: #d35400;
+      font-size: 1.5rem;
+      margin: 2.5rem 0 1rem;
+      border-left: 4px solid #e67e22;
+      padding-left: 0.75rem;
+    }
+    h3 {
+      color: #c0392b;
+      font-size: 1.2rem;
+      margin: 1.5rem 0 0.75rem;
+    }
+    p {
+      margin: 0.75rem 0;
+    }
+    a {
+      color: #e67e22;
+    }
+    code {
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+      background: #fff3e0;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #e65100;
+    }
+    pre {
+      background: #263238;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      color: #eeffff;
+    }
+    .comment { color: #546e7a; }
+    .keyword { color: #c792ea; }
+    .string { color: #c3e88d; }
+    .property { color: #82aaff; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.6rem 1rem;
+      text-align: left;
+    }
+    th {
+      background: #fff3e0;
+      color: #e65100;
+    }
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background: #fff;
+      padding: 1.5rem;
+      overflow-y: auto;
+      border-right: 1px solid #eee;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    }
+    .nav-logo {
+      max-width: 120px;
+      margin-bottom: 1rem;
+    }
+    .nav h2 {
+      font-size: 1rem;
+      margin: 0 0 1rem;
+      border: none;
+      padding: 0;
+      color: #e67e22;
+    }
+    .nav ul {
+      list-style: none;
+    }
+    .nav li {
+      margin: 0.4rem 0;
+    }
+    .nav ul ul {
+      padding-left: 1rem;
+      margin-top: 0.3rem;
+    }
+    .nav ul ul li {
+      margin: 0.2rem 0;
+    }
+    .nav ul ul a {
+      font-size: 0.82rem;
+      color: #888;
+    }
+    .nav a {
+      color: #666;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav a:hover {
+      color: #e67e22;
+    }
+    .content {
+      margin-left: 280px;
+    }
+    .note {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .warning {
+      background: #fff3e0;
+      border-left: 4px solid #e67e22;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .content { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <img src="logo.png" alt="Shibaiinu" class="nav-logo">
+    <h2>目次</h2>
+    <ul>
+      <li><a href="#setup">セットアップスクリプト</a></li>
+      <li><a href="#basic">基本構造</a></li>
+      <li><a href="#message">MessageEvent</a></li>
+      <li>
+        <a href="#character">キャラクター表示</a>
+        <ul>
+          <li><a href="#anim-image">登場/退場アニメ</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#background">背景・BGM・SE</a>
+        <ul>
+          <li><a href="#anim-background">背景アニメ</a></li>
+        </ul>
+      </li>
+      <li><a href="#selection">SelectionEvent</a></li>
+      <li><a href="#input">InputEvent</a></li>
+      <li><a href="#wait">WaitEvent</a></li>
+      <li><a href="#tags">テキスト装飾タグ</a></li>
+      <li><a href="#flags">フラグ管理</a></li>
+      <li><a href="#advanced">高度な使い方</a></li>
+      <li><a href="#files">ファイル配置</a></li>
+    </ul>
+  </nav>
+
+  <div class="content">
+    <div class="container">
+      <h1>Shibaiinu Engine 使い方ガイド</h1>
+      <p>シナリオの書き方と機能の詳細ガイドです。</p>
+
+      <!-- セットアップスクリプト -->
+      <h2 id="setup">セットアップスクリプト</h2>
+      <p>新しいシナリオを始めるときは、付属のシェルスクリプトを使うと一発で雛形を用意できます。手で <code>index.html</code> を編集する必要はありません。</p>
+
+      <h3>使い方</h3>
+      <pre><code><span class="comment"># プロジェクトルートで実行</span>
+./shibaiinu/scripts/setup-scenario.sh &lt;シナリオ名&gt; [タイトル]
+
+<span class="comment"># 例</span>
+./shibaiinu/scripts/setup-scenario.sh myStory
+./shibaiinu/scripts/setup-scenario.sh myStory <span class="string">"私の物語"</span></code></pre>
+
+      <h3>引数</h3>
+      <table>
+        <tr><th>引数</th><th>説明</th></tr>
+        <tr><td><code>&lt;シナリオ名&gt;</code></td><td>JS 識別子として使える名前（英字始まり、英数字とアンダースコアのみ）。ファイル名・変数名・URL パスに使われます。</td></tr>
+        <tr><td><code>[タイトル]</code></td><td>シナリオ選択画面に表示されるタイトル。省略時はシナリオ名と同じになります。</td></tr>
+      </table>
+
+      <h3>実行されること</h3>
+      <ol style="margin-left: 1.5rem;">
+        <li>アセットディレクトリを作成: <code>shibaiinu/assets/users/&lt;名前&gt;/</code>(<code>audio/bgm</code>, <code>audio/se</code>, <code>images/backgrounds</code>, <code>images/person</code>)</li>
+        <li>空のシナリオファイルを作成: <code>shibaiinu/scenario/&lt;名前&gt;.js</code>(MessageEvent 1つだけ入った最小サンプル)</li>
+        <li><code>index.html</code> に <code>import</code> 文を追加し、<code>scenarios</code> 配列に新しいエントリを追加</li>
+      </ol>
+
+      <h3>生成されるシナリオファイル</h3>
+      <pre><code><span class="comment">// shibaiinu/scenario/myStory.js</span>
+<span class="keyword">import</span> { Scenario } <span class="keyword">from</span> <span class="string">'../core/scenario.js'</span>;
+<span class="keyword">import</span> { MessageEvent, SelectionEvent, InputEvent, WaitEvent } <span class="keyword">from</span> <span class="string">'../core/events/index.js'</span>;
+
+<span class="keyword">export const</span> myStory = <span class="keyword">new</span> Scenario({
+  <span class="string">"start"</span>: {
+    event: <span class="keyword">new</span> MessageEvent([
+      <span class="string">"ここに最初のメッセージを書いてください。"</span>,
+    ]),
+    next: <span class="keyword">null</span>
+  }
+});</code></pre>
+
+      <div class="note">
+        生成後はこのファイルを編集していつもどおりイベントを書き足してください。アセットも <code>shibaiinu/assets/users/&lt;名前&gt;/</code> 配下に置けば、登録時の <code>assetsPath</code> が自動でその場所を指します。
+      </div>
+
+      <div class="warning">
+        <strong>注意:</strong> 既に同名のアセットディレクトリ・シナリオファイル・<code>import</code> が存在する場合はスクリプトが中止して何も変更しません（上書き防止）。
+      </div>
+
+      <h3>シナリオの削除</h3>
+      <p>追加したシナリオを取り除くには削除スクリプトを使います。デフォルトでは <strong>アセットは残します</strong>（実作業の素材を誤って消さないため）。</p>
+
+      <pre><code><span class="comment"># シナリオファイルと index.html の登録だけ削除（アセットは残す）</span>
+./shibaiinu/scripts/delete-scenario.sh myStory
+
+<span class="comment"># アセットも一緒に削除（確認プロンプトあり）</span>
+./shibaiinu/scripts/delete-scenario.sh myStory --with-assets
+
+<span class="comment"># 確認なしで全削除</span>
+./shibaiinu/scripts/delete-scenario.sh myStory --with-assets -y</code></pre>
+
+      <h3>オプション</h3>
+      <table>
+        <tr><th>オプション</th><th>説明</th></tr>
+        <tr><td><code>--with-assets</code></td><td><code>shibaiinu/assets/users/&lt;名前&gt;/</code> も削除する</td></tr>
+        <tr><td><code>-y</code>, <code>--yes</code></td><td>確認プロンプトをスキップする</td></tr>
+      </table>
+
+      <div class="note">
+        部分的な状態（例: シナリオファイルだけ消した後にアセットだけ残った）でも再実行できます。見つからない要素はスキップされ、見つかったものだけ削除します。
+      </div>
+
+      <!-- 基本構造 -->
+      <h2 id="basic">基本構造</h2>
+
+      <h3>シナリオファイルの作成</h3>
+      <pre><code><span class="comment">// shibaiinu/scenario/myStory.js</span>
+<span class="keyword">import</span> { Scenario } <span class="keyword">from</span> <span class="string">'../core/scenario.js'</span>;
+<span class="keyword">import</span> { MessageEvent, SelectionEvent } <span class="keyword">from</span> <span class="string">'../core/events/index.js'</span>;
+
+<span class="keyword">export const</span> myStory = <span class="keyword">new</span> Scenario({
+  <span class="string">"start"</span>: {
+    event: <span class="keyword">new</span> MessageEvent([...]),
+    next: <span class="string">"次のイベントID"</span>
+  },
+  <span class="comment">// ...</span>
+});</code></pre>
+
+      <h3>index.htmlでシナリオを登録</h3>
+      <pre><code><span class="keyword">import</span> { ShibaiinuEngine } <span class="keyword">from</span> <span class="string">'./shibaiinu/engine.js'</span>;
+<span class="keyword">import</span> { myStory } <span class="keyword">from</span> <span class="string">'./shibaiinu/scenario/myStory.js'</span>;
+
+<span class="keyword">const</span> scenarios = [
+  {
+    <span class="property">id</span>: <span class="string">'myStory'</span>,
+    <span class="property">title</span>: <span class="string">'シナリオのタイトル'</span>,
+    <span class="property">description</span>: <span class="string">'シナリオの説明文'</span>,
+    <span class="property">scenario</span>: myStory,
+    <span class="property">assetsPath</span>: <span class="string">'shibaiinu/assets/my_story/'</span>
+  }
+];
+
+<span class="keyword">const</span> engine = <span class="keyword">new</span> ShibaiinuEngine(<span class="string">'game-container'</span>, { scenarios });
+engine.start();</code></pre>
+
+      <div class="note">
+        <strong>シナリオ選択画面:</strong> 複数シナリオ登録時はタイトル画面で選択、単一シナリオ時は直接開始します。
+      </div>
+
+      <!-- MessageEvent -->
+      <h2 id="message">MessageEvent（メッセージイベント）</h2>
+      <p>テキストを順番に表示するイベントです。</p>
+
+      <h3>基本的な使い方</h3>
+      <pre><code><span class="keyword">new</span> MessageEvent([
+  <span class="string">"普通のテキスト"</span>,
+  <span class="string">"クリックで次へ進む"</span>
+])</code></pre>
+
+      <h3>キャラクター付きメッセージ</h3>
+      <pre><code><span class="keyword">new</span> MessageEvent([
+  { <span class="property">speaker</span>: <span class="string">"ユイ"</span>, <span class="property">text</span>: <span class="string">"こんにちは！"</span> },
+  { <span class="property">speaker</span>: <span class="string">"ユイ"</span>, <span class="property">image</span>: <span class="string">"yui.png"</span>, <span class="property">text</span>: <span class="string">"私はユイだよ"</span> }
+])</code></pre>
+
+      <h3>プロパティ一覧</h3>
+      <table>
+        <tr><th>プロパティ</th><th>説明</th><th>例</th></tr>
+        <tr><td><code>text</code></td><td>表示するテキスト（必須）</td><td><code>"こんにちは"</code></td></tr>
+        <tr><td><code>speaker</code></td><td>話者名</td><td><code>"ユイ"</code></td></tr>
+        <tr><td><code>image</code></td><td>キャラ画像ファイル名</td><td><code>"yui.png"</code></td></tr>
+        <tr><td><code>position</code></td><td>キャラ表示位置</td><td><code>"left"</code> / <code>"center"</code> / <code>"right"</code></td></tr>
+        <tr><td><code>background</code></td><td>背景画像ファイル名</td><td><code>"park.jpg"</code></td></tr>
+        <tr><td><code>backgroundFit</code></td><td>背景表示モード</td><td><code>"cover"</code> / <code>"contain"</code></td></tr>
+        <tr><td><code>bgm</code></td><td>BGMファイル名</td><td><code>"title.mp3"</code></td></tr>
+        <tr><td><code>se</code></td><td>効果音ファイル名</td><td><code>"click.mp3"</code></td></tr>
+      </table>
+
+      <!-- キャラクター表示 -->
+      <h2 id="character">キャラクター表示</h2>
+
+      <h3>基本操作</h3>
+      <pre><code><span class="comment">// 画像を表示（中央、デフォルト）</span>
+{ <span class="property">image</span>: <span class="string">"yui.png"</span>, <span class="property">text</span>: <span class="string">"登場！"</span> }
+
+<span class="comment">// 画像を非表示</span>
+{ <span class="property">image</span>: <span class="keyword">null</span>, <span class="property">text</span>: <span class="string">"退場した"</span> }
+
+<span class="comment">// 前の状態を維持（imageを省略）</span>
+{ <span class="property">speaker</span>: <span class="string">"ユイ"</span>, <span class="property">text</span>: <span class="string">"まだいるよ"</span> }</code></pre>
+
+      <h3>複数キャラクター表示</h3>
+      <p>最大3人のキャラクターを同時に表示できます。</p>
+      <pre><code><span class="comment">// 左に表示</span>
+{ <span class="property">image</span>: <span class="string">"yui.png"</span>, <span class="property">position</span>: <span class="string">"left"</span>, <span class="property">speaker</span>: <span class="string">"ユイ"</span>, <span class="property">text</span>: <span class="string">"左側に立つよ"</span> }
+
+<span class="comment">// 右に表示（左のキャラはそのまま）</span>
+{ <span class="property">image</span>: <span class="string">"taro.png"</span>, <span class="property">position</span>: <span class="string">"right"</span>, <span class="property">speaker</span>: <span class="string">"タロウ"</span>, <span class="property">text</span>: <span class="string">"右側に登場"</span> }
+
+<span class="comment">// 左のキャラだけ消す</span>
+{ <span class="property">image</span>: <span class="keyword">null</span>, <span class="property">position</span>: <span class="string">"left"</span>, <span class="property">text</span>: <span class="string">"ユイが退場した"</span> }
+
+<span class="comment">// 全員消す</span>
+{ <span class="property">image</span>: <span class="keyword">null</span>, <span class="property">position</span>: <span class="string">"all"</span>, <span class="property">text</span>: <span class="string">"全員退場"</span> }</code></pre>
+
+      <table>
+        <tr><th>位置</th><th>説明</th></tr>
+        <tr><td><code>left</code></td><td>画面左側</td></tr>
+        <tr><td><code>center</code></td><td>画面中央（デフォルト）</td></tr>
+        <tr><td><code>right</code></td><td>画面右側</td></tr>
+        <tr><td><code>all</code></td><td>全位置（非表示時のみ）</td></tr>
+      </table>
+
+      <h3 id="anim-image">登場/退場アニメーション</h3>
+      <p><code>imageAnim</code> でキャラの表示/非表示時のアニメーションを指定できます。方向 = キャラが通る辺（左から入る／左へ抜ける）。</p>
+      <pre><code><span class="comment">// 左からスライドイン</span>
+{ <span class="property">image</span>: <span class="string">"yui.png"</span>, <span class="property">position</span>: <span class="string">"left"</span>, <span class="property">imageAnim</span>: <span class="string">"slide-left"</span>, <span class="property">text</span>: <span class="string">"颯爽と登場"</span> }
+
+<span class="comment">// 右へスライドアウト</span>
+{ <span class="property">image</span>: <span class="keyword">null</span>, <span class="property">position</span>: <span class="string">"left"</span>, <span class="property">imageAnim</span>: <span class="string">"slide-right"</span>, <span class="property">text</span>: <span class="string">"右へ去っていった"</span> }
+
+<span class="comment">// フェード（明示）</span>
+{ <span class="property">image</span>: <span class="string">"taro.png"</span>, <span class="property">imageAnim</span>: <span class="string">"fade"</span>, <span class="property">text</span>: <span class="string">"ふわっと現れる"</span> }</code></pre>
+
+      <table>
+        <tr><th>値</th><th>挙動</th></tr>
+        <tr><td><code>fade</code></td><td>フェードイン／フェードアウト</td></tr>
+        <tr><td><code>slide-left</code></td><td>左辺から入る／左辺へ抜ける</td></tr>
+        <tr><td><code>slide-right</code></td><td>右辺から入る／右辺へ抜ける</td></tr>
+        <tr><td><code>slide-top</code></td><td>上から入る／上へ抜ける</td></tr>
+        <tr><td><code>slide-bottom</code></td><td>下から入る／下へ抜ける</td></tr>
+      </table>
+
+      <div class="note">
+        <code>imageAnim</code> 未指定時は従来通りのフェードになります。背景は <code>backgroundAnim</code> で同じ値が使えます。
+      </div>
+
+      <!-- 背景・BGM・SE -->
+      <h2 id="background">背景・BGM・効果音</h2>
+
+      <h3>背景画像</h3>
+      <pre><code><span class="comment">// 背景を変更</span>
+{ <span class="property">background</span>: <span class="string">"night.jpg"</span>, <span class="property">text</span>: <span class="string">"夜になった"</span> }
+
+<span class="comment">// 背景を非表示</span>
+{ <span class="property">background</span>: <span class="keyword">null</span>, <span class="property">text</span>: <span class="string">"暗転..."</span> }
+
+<span class="comment">// 表示モードを変更（cover / contain）</span>
+{ <span class="property">background</span>: <span class="string">"screenshot.png"</span>, <span class="property">backgroundFit</span>: <span class="string">"contain"</span>, <span class="property">text</span>: <span class="string">"全体を表示"</span> }</code></pre>
+
+      <h3 id="anim-background">背景アニメーション</h3>
+      <p><code>backgroundAnim</code> で背景の切り替え/非表示時のアニメーションを指定できます。値は <a href="#anim-image">imageAnim</a> と同じ。</p>
+      <pre><code><span class="comment">// 左から流れ込んで切り替わる</span>
+{ <span class="property">background</span>: <span class="string">"city.png"</span>, <span class="property">backgroundAnim</span>: <span class="string">"slide-left"</span>, <span class="property">text</span>: <span class="string">"街に到着した"</span> }
+
+<span class="comment">// フェードアウトで暗転</span>
+{ <span class="property">background</span>: <span class="keyword">null</span>, <span class="property">backgroundAnim</span>: <span class="string">"fade"</span>, <span class="property">text</span>: <span class="string">"視界が暗くなる..."</span> }
+
+<span class="comment">// 上からスライドダウンで降ってくる</span>
+{ <span class="property">background</span>: <span class="string">"sky.png"</span>, <span class="property">backgroundAnim</span>: <span class="string">"slide-top"</span>, <span class="property">text</span>: <span class="string">"空が広がる"</span> }</code></pre>
+
+      <table>
+        <tr><th>値</th><th>挙動</th></tr>
+        <tr><td><code>fade</code></td><td>フェードイン／フェードアウト</td></tr>
+        <tr><td><code>slide-left</code></td><td>左辺から入る／左辺へ抜ける</td></tr>
+        <tr><td><code>slide-right</code></td><td>右辺から入る／右辺へ抜ける</td></tr>
+        <tr><td><code>slide-top</code></td><td>上から入る／上へ抜ける</td></tr>
+        <tr><td><code>slide-bottom</code></td><td>下から入る／下へ抜ける</td></tr>
+      </table>
+
+      <h3>BGMの再生</h3>
+      <pre><code><span class="comment">// BGM再生（ループ）</span>
+{ <span class="property">bgm</span>: <span class="string">"title.mp3"</span>, <span class="property">text</span>: <span class="string">"ゲーム開始"</span> }
+
+<span class="comment">// BGMをフェードアウトして停止</span>
+{ <span class="property">bgm</span>: <span class="keyword">null</span>, <span class="property">text</span>: <span class="string">"静かになった..."</span> }
+
+<span class="comment">// 別のBGMに切り替え</span>
+{ <span class="property">bgm</span>: <span class="string">"battle.mp3"</span>, <span class="property">text</span>: <span class="string">"戦闘開始！"</span> }</code></pre>
+
+      <h3>効果音の再生</h3>
+      <pre><code><span class="comment">// 効果音再生</span>
+{ <span class="property">se</span>: <span class="string">"door.mp3"</span>, <span class="property">text</span>: <span class="string">"ドアが開いた"</span> }
+
+<span class="comment">// BGMと効果音を同時に</span>
+{ <span class="property">bgm</span>: <span class="string">"battle.mp3"</span>, <span class="property">se</span>: <span class="string">"sword.mp3"</span>, <span class="property">text</span>: <span class="string">"戦闘開始！"</span> }</code></pre>
+
+      <!-- SelectionEvent -->
+      <h2 id="selection">SelectionEvent（選択肢イベント）</h2>
+      <p>プレイヤーに選択肢を提示するイベント。最大4つまで。</p>
+
+      <h3>基本的な使い方</h3>
+      <pre><code><span class="string">"choice1"</span>: {
+  event: <span class="keyword">new</span> SelectionEvent([<span class="string">"はい"</span>, <span class="string">"いいえ"</span>, <span class="string">"考え中"</span>]),
+  next: { <span class="property">0</span>: <span class="string">"yes_event"</span>, <span class="property">1</span>: <span class="string">"no_event"</span>, <span class="property">2</span>: <span class="string">"think_event"</span> }
+}</code></pre>
+
+      <div class="note">
+        <strong>キーボード操作:</strong> 上下キーで選択、Enterで決定できます。
+      </div>
+
+      <h3>選択肢の上に問題文を表示</h3>
+      <p><code>prompt</code> オプションで選択肢の上に問題文を表示できます。<code>[color]</code> などの装飾タグや <code>{flagName}</code> も使えます。</p>
+      <pre><code><span class="string">"quiz"</span>: {
+  event: <span class="keyword">new</span> SelectionEvent(
+    [<span class="string">"4"</span>, <span class="string">"5"</span>, <span class="string">"6"</span>],
+    { <span class="property">prompt</span>: <span class="string">"2 + 3 は？"</span> }
+  ),
+  next: { <span class="property">0</span>: <span class="string">"wrong"</span>, <span class="property">1</span>: <span class="string">"correct"</span>, <span class="property">2</span>: <span class="string">"wrong"</span> }
+}</code></pre>
+
+      <h3>選択時にフラグを設定する</h3>
+      <p><code>afterHandler</code> を使うと、選択時にフラグを設定できます。</p>
+      <pre><code><span class="string">"choice"</span>: {
+  event: <span class="keyword">new</span> SelectionEvent(
+    [<span class="string">"はい"</span>, <span class="string">"いいえ"</span>],
+    {
+      <span class="property">afterHandler</span>: (index, choice) => {
+        <span class="comment">// index: 選んだ番号 (0, 1, ...)</span>
+        <span class="comment">// choice: 選んだテキスト ("はい" or "いいえ")</span>
+        <span class="keyword">if</span> (index === 0) {
+          myScenario.setFlag(<span class="string">"agreed"</span>, <span class="keyword">true</span>);
+        }
+      }
+    }
+  ),
+  next: { <span class="property">0</span>: <span class="string">"yes_route"</span>, <span class="property">1</span>: <span class="string">"no_route"</span> }
+}</code></pre>
+
+      <div class="warning">
+        <strong>注意:</strong> シナリオ内で <code>myScenario.setFlag()</code> を使うには、ファクトリ関数パターンを使うか、exportした変数を参照する必要があります（<a href="#advanced">高度な使い方</a>参照）。
+      </div>
+
+      <!-- InputEvent -->
+      <h2 id="input">InputEvent（入力イベント）</h2>
+      <p>プレイヤーにテキスト入力を求めるイベント。名前入力などに使用。</p>
+
+      <h3>基本的な使い方</h3>
+      <pre><code><span class="string">"ask_name"</span>: {
+  event: <span class="keyword">new</span> InputEvent(<span class="string">"あなたの名前は？"</span>, <span class="string">"player_name"</span>),
+  next: <span class="string">"greet"</span>
+},
+<span class="string">"greet"</span>: {
+  event: <span class="keyword">new</span> MessageEvent([
+    <span class="string">"こんにちは、{player_name}さん！"</span>
+  ]),
+  next: <span class="keyword">null</span>
+}</code></pre>
+
+      <h3>オプション</h3>
+      <pre><code><span class="keyword">new</span> InputEvent(<span class="string">"名前を入力"</span>, <span class="string">"name"</span>, {
+  <span class="property">placeholder</span>: <span class="string">"例: 太郎"</span>,     <span class="comment">// プレースホルダー</span>
+  <span class="property">defaultValue</span>: <span class="string">"ゲスト"</span>,     <span class="comment">// 初期値</span>
+  <span class="property">maxLength</span>: 10                <span class="comment">// 最大文字数</span>
+})</code></pre>
+
+      <table>
+        <tr><th>引数</th><th>説明</th><th>例</th></tr>
+        <tr><td>prompt</td><td>表示するプロンプト（必須）</td><td><code>"あなたの名前は？"</code></td></tr>
+        <tr><td>flagName</td><td>入力値を保存するフラグ名（必須）</td><td><code>"player_name"</code></td></tr>
+        <tr><td>options.placeholder</td><td>入力欄のプレースホルダー</td><td><code>"例: 太郎"</code></td></tr>
+        <tr><td>options.defaultValue</td><td>入力欄の初期値</td><td><code>"ゲスト"</code></td></tr>
+        <tr><td>options.maxLength</td><td>最大文字数（デフォルト: 50）</td><td><code>20</code></td></tr>
+      </table>
+
+      <div class="note">
+        入力値は自動的にフラグに保存され、<code>{フラグ名}</code> でテキストに埋め込めます。
+      </div>
+
+      <!-- WaitEvent -->
+      <h2 id="wait">WaitEvent（間を開けるイベント）</h2>
+      <p>指定したミリ秒だけ間を開けてから次のイベントへ自動進行します。クリックやEnterではスキップできません。</p>
+
+      <pre><code><span class="string">"before_battle"</span>: {
+  event: <span class="keyword">new</span> WaitEvent(<span class="property">1500</span>),  <span class="comment">// 1.5秒待つ</span>
+  next: <span class="string">"battle_start"</span>
+}</code></pre>
+
+      <div class="note">
+        前のメッセージはそのまま画面に残ります。シーン転換や緊張感の演出に。
+      </div>
+
+      <!-- テキスト装飾タグ -->
+      <h2 id="tags">テキスト装飾タグ</h2>
+
+      <table>
+        <tr><th>タグ</th><th>説明</th><th>例</th></tr>
+        <tr><td><code>{フラグ名}</code></td><td>フラグの値を埋め込み</td><td><code>{player_name}</code></td></tr>
+        <tr><td><code>[color:色]...[/color]</code></td><td>文字色変更</td><td><code>[color:red]赤[/color]</code></td></tr>
+        <tr><td><code>[b]...[/b]</code></td><td>太字</td><td><code>[b]重要[/b]</code></td></tr>
+        <tr><td><code>[shake]...[/shake]</code></td><td>震えるテキスト</td><td><code>[shake]ガタガタ[/shake]</code></td></tr>
+        <tr><td><code>[br]</code></td><td>改行</td><td><code>一行目[br]二行目</code></td></tr>
+        <tr><td><code>[wait:N]</code></td><td>タイプライターを N ミリ秒だけ間を開ける</td><td><code>...[wait:500]ん？</code></td></tr>
+        <tr><td><code>[code]...[/code]</code></td><td>コードブロック</td><td><code>[code]let x = 1;[/code]</code></td></tr>
+        <tr><td><code>[inline]...[/inline]</code></td><td>インラインコード</td><td><code>[inline]変数名[/inline]</code></td></tr>
+      </table>
+
+      <h3>使用例</h3>
+      <pre><code><span class="comment">// フラグの値を埋め込み</span>
+<span class="comment">// scenario.setFlag("name", "太郎") の場合</span>
+<span class="string">"こんにちは、{name}さん！"</span>  <span class="comment">// → "こんにちは、太郎さん！"</span>
+
+<span class="comment">// 色変更</span>
+<span class="string">"[color:#ff69b4]ピンク色[/color]のテキスト"</span>
+
+<span class="comment">// 太字</span>
+<span class="string">"[b]重要な言葉[/b]"</span>
+
+<span class="comment">// 震えるテキスト</span>
+<span class="string">"[shake]ガタガタ...[/shake]"</span>
+
+<span class="comment">// コードブロック（コピーボタン付き、タイプライターなし）</span>
+<span class="string">"[code]const x = 1;[br]console.log(x);[/code]"</span>
+
+<span class="comment">// タイプライターを途中で止めて間を作る（500ms 待機）</span>
+<span class="string">"よし、いくぞ...[wait:500]覚悟しろ！"</span>
+
+<span class="comment">// 組み合わせ</span>
+<span class="string">"[color:#ffd700][b]金色で太字[/b][/color]"</span></code></pre>
+
+      <!-- フラグ管理 -->
+      <h2 id="flags">フラグ管理</h2>
+      <p>ゲームの進行状況を記録し、条件分岐に使用できます。</p>
+
+      <h3>フラグによる条件分岐</h3>
+      <pre><code><span class="string">"door"</span>: {
+  event: <span class="keyword">new</span> MessageEvent([<span class="string">"扉がある..."</span>]),
+  next: (flags) => {
+    <span class="keyword">if</span> (flags.has_key) {
+      <span class="keyword">return</span> <span class="string">"open_door"</span>
+    }
+    <span class="keyword">return</span> <span class="string">"locked_door"</span>
+  }
+}</code></pre>
+
+      <h3>SelectionEventでのフラグ分岐</h3>
+      <pre><code><span class="string">"choice"</span>: {
+  event: <span class="keyword">new</span> SelectionEvent([<span class="string">"進む"</span>, <span class="string">"戻る"</span>]),
+  next: (flags, selectedIndex) => {
+    <span class="keyword">if</span> (selectedIndex === 0) {
+      <span class="keyword">return</span> flags.is_strong ? <span class="string">"win_battle"</span> : <span class="string">"lose_battle"</span>
+    }
+    <span class="keyword">return</span> <span class="string">"go_back"</span>
+  }
+}</code></pre>
+
+      <h3>フラグ関連メソッド</h3>
+      <pre><code>scenario.setFlag(<span class="string">"key"</span>, <span class="keyword">true</span>)     <span class="comment">// フラグを設定</span>
+scenario.setFlag(<span class="string">"count"</span>, 5)      <span class="comment">// 数値も可</span>
+scenario.getFlag(<span class="string">"key"</span>)           <span class="comment">// フラグを取得</span>
+scenario.hasFlag(<span class="string">"key"</span>)           <span class="comment">// フラグが存在するか</span>
+scenario.clearFlags()             <span class="comment">// 全フラグをクリア</span></code></pre>
+
+      <!-- 高度な使い方 -->
+      <h2 id="advanced">高度な使い方</h2>
+
+      <h3>シナリオ内でフラグを設定する（ファクトリ関数パターン）</h3>
+      <p>シナリオ内から自身を参照するには、ファクトリ関数を使います。</p>
+      <pre><code><span class="comment">// shibaiinu/scenario/myStory.js</span>
+<span class="keyword">import</span> { Scenario } <span class="keyword">from</span> <span class="string">'../core/scenario.js'</span>;
+<span class="keyword">import</span> { MessageEvent, SelectionEvent } <span class="keyword">from</span> <span class="string">'../core/events/index.js'</span>;
+
+<span class="keyword">export function</span> createMyStory() {
+  <span class="keyword">const</span> scenario = <span class="keyword">new</span> Scenario({
+    <span class="string">"start"</span>: {
+      event: <span class="keyword">new</span> MessageEvent(
+        [<span class="string">"冒険の始まり..."</span>],
+        <span class="keyword">null</span>,
+        () => { scenario.setFlag(<span class="string">"started"</span>, <span class="keyword">true</span>) }
+      ),
+      next: <span class="string">"choice"</span>
+    },
+    <span class="string">"choice"</span>: {
+      event: <span class="keyword">new</span> SelectionEvent(
+        [<span class="string">"戦う"</span>, <span class="string">"逃げる"</span>],
+        {
+          <span class="property">afterHandler</span>: (index) => {
+            <span class="keyword">if</span> (index === 0) {
+              scenario.setFlag(<span class="string">"brave"</span>, <span class="keyword">true</span>);
+            }
+          }
+        }
+      ),
+      next: { <span class="property">0</span>: <span class="string">"battle"</span>, <span class="property">1</span>: <span class="string">"escape"</span> }
+    }
+  });
+  <span class="keyword">return</span> scenario;
+}</code></pre>
+
+      <h3>index.htmlでの呼び出し</h3>
+      <pre><code><span class="keyword">import</span> { createMyStory } <span class="keyword">from</span> <span class="string">'./shibaiinu/scenario/myStory.js'</span>;
+
+<span class="keyword">const</span> scenarios = [
+  {
+    <span class="property">id</span>: <span class="string">'myStory'</span>,
+    <span class="property">title</span>: <span class="string">'タイトル'</span>,
+    <span class="property">description</span>: <span class="string">'説明'</span>,
+    <span class="property">scenario</span>: createMyStory()  <span class="comment">// 関数を呼び出す</span>
+  }
+];</code></pre>
+
+      <!-- ファイル配置 -->
+      <h2 id="files">ファイル配置</h2>
+
+      <h3>アセットルートの構成</h3>
+      <p><code>shibaiinu/assets/</code> はシステム提供のものとユーザー作成のものを分けて管理します。</p>
+      <pre><code>shibaiinu/assets/
+├── system/              <span class="comment"># エンジン同梱（編集しない）</span>
+│   ├── audio/se/        <span class="comment"># select.mp3 / decide.mp3 などのシステム SE</span>
+│   ├── images/
+│   └── sample_game/     <span class="comment"># サンプルシナリオ用アセット</span>
+└── users/               <span class="comment"># setup-scenario.sh で作成（編集する）</span>
+    └── &lt;シナリオ名&gt;/
+        ├── audio/{bgm,se}/
+        └── images/{backgrounds,person}/</code></pre>
+
+      <h3>シナリオ内のサブディレクトリ</h3>
+      <p>各シナリオの <code>assetsPath</code> 配下には以下のサブディレクトリを置きます。シナリオから <code>image: "yui.png"</code> のようにファイル名だけ指定すれば、対応するフォルダから読み込まれます。</p>
+      <table>
+        <tr><th>種類</th><th>配置場所（<code>assetsPath</code> 配下）</th></tr>
+        <tr><td>キャラ画像</td><td><code>images/person/</code></td></tr>
+        <tr><td>背景画像</td><td><code>images/backgrounds/</code></td></tr>
+        <tr><td>BGM</td><td><code>audio/bgm/</code></td></tr>
+        <tr><td>効果音</td><td><code>audio/se/</code></td></tr>
+      </table>
+
+      <div class="note">
+        シナリオ登録時に <code>assetsPath</code> を指定すると、シナリオごとに異なるアセットフォルダを使用できます。<code>setup-scenario.sh</code> で作成した場合は <code>shibaiinu/assets/users/&lt;名前&gt;/</code> が自動で割り当てられます。
+      </div>
+
+      <h3>シナリオ例</h3>
+      <pre><code><span class="keyword">export const</span> sampleScenario = <span class="keyword">new</span> Scenario({
+  <span class="string">"start"</span>: {
+    event: <span class="keyword">new</span> MessageEvent([
+      { <span class="property">background</span>: <span class="string">"room.jpg"</span>, <span class="property">bgm</span>: <span class="string">"morning.mp3"</span>, <span class="property">text</span>: <span class="string">"朝、目が覚めた。"</span> },
+      { <span class="property">speaker</span>: <span class="string">"母"</span>, <span class="property">image</span>: <span class="string">"mom.png"</span>, <span class="property">text</span>: <span class="string">"おはよう！"</span> }
+    ]),
+    next: <span class="string">"choice"</span>
+  },
+  <span class="string">"choice"</span>: {
+    event: <span class="keyword">new</span> SelectionEvent([<span class="string">"食べる"</span>, <span class="string">"食べない"</span>]),
+    next: { <span class="property">0</span>: <span class="string">"eat"</span>, <span class="property">1</span>: <span class="string">"skip"</span> }
+  },
+  <span class="string">"eat"</span>: {
+    event: <span class="keyword">new</span> MessageEvent([<span class="string">"朝ごはんを食べた。"</span>]),
+    next: <span class="keyword">null</span>
+  },
+  <span class="string">"skip"</span>: {
+    event: <span class="keyword">new</span> MessageEvent([<span class="string">"お腹が空いてきた..."</span>]),
+    next: <span class="keyword">null</span>
+  }
+});</code></pre>
+
+    </div>
+  </div>
+</body>
+</html>

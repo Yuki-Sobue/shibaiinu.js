@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self'">
+  <title>シナリオビューワー</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", monospace;
+      background: #1a1a2e;
+      color: #fff;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #ffd700;
+      margin-bottom: 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .stats {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      color: #ffd700;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .event-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all 0.2s;
+    }
+
+    .event-card:hover {
+      border-color: #ffd700;
+    }
+
+    .event-card.start {
+      border-color: #4caf50;
+      border-width: 2px;
+    }
+
+    .event-card.end {
+      border-color: #f44336;
+      border-width: 2px;
+    }
+
+    .event-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .event-id {
+      font-weight: bold;
+      color: #ffd700;
+      font-size: 1.1rem;
+    }
+
+    .event-type {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      background: #333;
+    }
+
+    .event-type.message {
+      background: #2196f3;
+    }
+
+    .event-type.selection {
+      background: #ff9800;
+    }
+
+    .event-content {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .message-item {
+      padding: 0.25rem 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .message-item:last-child {
+      border-bottom: none;
+    }
+
+    .message-speaker {
+      color: #ff69b4;
+      font-weight: bold;
+    }
+
+    .message-text {
+      color: #ccc;
+    }
+
+    .message-meta {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .choice-item {
+      padding: 0.25rem 0.5rem;
+      margin: 0.25rem 0;
+      background: rgba(255, 152, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    .event-next {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .next-label {
+      color: #888;
+    }
+
+    .next-id {
+      color: #4caf50;
+      cursor: pointer;
+    }
+
+    .next-id:hover {
+      text-decoration: underline;
+    }
+
+    .next-conditional {
+      color: #ff9800;
+      font-style: italic;
+    }
+
+    .flow-diagram {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+
+    .flow-diagram h2 {
+      color: #ffd700;
+      margin-bottom: 1rem;
+    }
+
+    .flow-text {
+      font-family: monospace;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.4;
+    }
+
+    .flow-node {
+      color: #4caf50;
+    }
+
+    .flow-arrow {
+      color: #888;
+    }
+
+    .flow-choice {
+      color: #ff9800;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>シナリオビューワー</h1>
+    <div class="stats" id="stats"></div>
+    <div class="event-list" id="event-list"></div>
+    <div class="flow-diagram">
+      <h2>フロー図</h2>
+      <div class="flow-text" id="flow-text"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { sampleGame } from './shibaiinu/scenario/sampleGame.js';
+
+    const scenario = sampleGame;
+    const eventMap = scenario.eventMap;
+
+    // 統計情報
+    function renderStats() {
+      const events = Object.entries(eventMap);
+      const messageEvents = events.filter(([_, v]) => v.event.constructor.name === 'MessageEvent');
+      const selectionEvents = events.filter(([_, v]) => v.event.constructor.name === 'SelectionEvent');
+      const endEvents = events.filter(([_, v]) => v.next === null);
+
+      const totalMessages = messageEvents.reduce((sum, [_, v]) => sum + v.event.messages.length, 0);
+      const totalChoices = selectionEvents.reduce((sum, [_, v]) => sum + v.event.choices.length, 0);
+
+      document.getElementById('stats').innerHTML = `
+        <div class="stat">
+          <div class="stat-value">${events.length}</div>
+          <div class="stat-label">イベント数</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${messageEvents.length}</div>
+          <div class="stat-label">メッセージ</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${selectionEvents.length}</div>
+          <div class="stat-label">選択肢</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${totalMessages}</div>
+          <div class="stat-label">総テキスト数</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${totalChoices}</div>
+          <div class="stat-label">総選択肢数</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${endEvents.length}</div>
+          <div class="stat-label">エンディング</div>
+        </div>
+      `;
+    }
+
+    // イベント一覧
+    function renderEventList() {
+      const container = document.getElementById('event-list');
+
+      for (const [id, node] of Object.entries(eventMap)) {
+        const event = node.event;
+        const isMessage = event.constructor.name === 'MessageEvent';
+        const isStart = id === 'start';
+        const isEnd = node.next === null;
+
+        let cardClass = 'event-card';
+        if (isStart) cardClass += ' start';
+        if (isEnd) cardClass += ' end';
+
+        let contentHtml = '';
+        if (isMessage) {
+          contentHtml = event.messages.map(m => {
+            const speaker = m.speaker ? `<span class="message-speaker">${m.speaker}:</span> ` : '';
+            const meta = [];
+            if (m.image) meta.push(`img:${m.image}`);
+            if (m.background) meta.push(`bg:${m.background}`);
+            if (m.image === null) meta.push('img:消去');
+            if (m.background === null) meta.push('bg:消去');
+            const metaHtml = meta.length ? `<span class="message-meta">[${meta.join(', ')}]</span>` : '';
+            return `<div class="message-item">${speaker}<span class="message-text">${escapeHtml(m.text)}</span> ${metaHtml}</div>`;
+          }).join('');
+        } else {
+          contentHtml = event.choices.map((c, i) =>
+            `<div class="choice-item">${i}: ${escapeHtml(c)}</div>`
+          ).join('');
+        }
+
+        let nextHtml = '';
+        if (node.next === null) {
+          nextHtml = '<span class="next-label">→ </span><span style="color:#f44336">END</span>';
+        } else if (typeof node.next === 'function') {
+          nextHtml = '<span class="next-label">→ </span><span class="next-conditional">(条件分岐)</span>';
+        } else if (typeof node.next === 'object') {
+          const nexts = Object.entries(node.next).map(([k, v]) =>
+            `${k}→<span class="next-id" data-id="${v}">${v}</span>`
+          ).join(', ');
+          nextHtml = `<span class="next-label">→ </span>${nexts}`;
+        } else {
+          nextHtml = `<span class="next-label">→ </span><span class="next-id" data-id="${node.next}">${node.next}</span>`;
+        }
+
+        container.innerHTML += `
+          <div class="${cardClass}" id="event-${id}">
+            <div class="event-header">
+              <span class="event-id">${id}</span>
+              <span class="event-type ${isMessage ? 'message' : 'selection'}">
+                ${isMessage ? 'MESSAGE' : 'SELECTION'}
+              </span>
+              ${isStart ? '<span style="color:#4caf50">● START</span>' : ''}
+              ${isEnd ? '<span style="color:#f44336">● END</span>' : ''}
+            </div>
+            <div class="event-content">${contentHtml}</div>
+            <div class="event-next">${nextHtml}</div>
+          </div>
+        `;
+      }
+
+      // クリックでスクロール
+      container.querySelectorAll('.next-id').forEach(el => {
+        el.addEventListener('click', () => {
+          const targetId = el.dataset.id;
+          const target = document.getElementById('event-' + targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.style.borderColor = '#fff';
+            setTimeout(() => target.style.borderColor = '', 1000);
+          }
+        });
+      });
+    }
+
+    // フロー図（テキスト）
+    function renderFlowDiagram() {
+      const lines = [];
+      const visited = new Set();
+
+      function traverse(id, indent = 0) {
+        if (!id || visited.has(id)) return;
+        visited.add(id);
+
+        const node = eventMap[id];
+        if (!node) return;
+
+        const prefix = '  '.repeat(indent);
+        const event = node.event;
+        const isMessage = event.constructor.name === 'MessageEvent';
+
+        lines.push(`${prefix}<span class="flow-node">[${id}]</span> ${isMessage ? 'MSG' : 'SEL'}`);
+
+        if (node.next === null) {
+          lines.push(`${prefix}  <span class="flow-arrow">└→</span> <span style="color:#f44336">END</span>`);
+        } else if (typeof node.next === 'function') {
+          lines.push(`${prefix}  <span class="flow-arrow">└→</span> <span class="flow-choice">(条件分岐)</span>`);
+        } else if (typeof node.next === 'object') {
+          Object.entries(node.next).forEach(([k, v], i, arr) => {
+            const isLast = i === arr.length - 1;
+            const arrow = isLast ? '└→' : '├→';
+            lines.push(`${prefix}  <span class="flow-arrow">${arrow}</span> <span class="flow-choice">[${k}]</span> → <span class="flow-node">${v}</span>`);
+          });
+        } else {
+          lines.push(`${prefix}  <span class="flow-arrow">└→</span> <span class="flow-node">${node.next}</span>`);
+          traverse(node.next, indent);
+        }
+      }
+
+      traverse('start');
+
+      document.getElementById('flow-text').innerHTML = lines.join('\n');
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    renderStats();
+    renderEventList();
+    renderFlowDiagram();
+  </script>
+</body>
+</html>

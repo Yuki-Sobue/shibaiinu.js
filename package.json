@@ -1,0 +1,66 @@
+{
+  "name": "shibaiinu.js",
+  "version": "1.0.0",
+  "private": true,
+  "description": "simple novel game engine",
+  "main": "electron/main.js",
+  "author": "Yuki Sobue",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yuki-Sobue/shibaiinu.js.git"
+  },
+  "homepage": "https://github.com/Yuki-Sobue/shibaiinu.js",
+  "bugs": {
+    "url": "https://github.com/Yuki-Sobue/shibaiinu.js/issues"
+  },
+  "keywords": [
+    "novel-game",
+    "visual-novel",
+    "game-engine",
+    "electron",
+    "javascript"
+  ],
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.shibaiinu.novel",
+    "productName": "Shibaiinu.js",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "shibaiinu/**/*",
+      "index.html",
+      "build/icon.png"
+    ],
+    "asar": true,
+    "afterPack": "electron/afterPack.js",
+    "mac": {
+      "category": "public.app-category.games",
+      "target": ["dmg", "zip"],
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "build/icon.png"
+    }
+  },
+  "devDependencies": {
+    "electron": "^32.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}

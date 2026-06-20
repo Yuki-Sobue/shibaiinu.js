@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'">
+  <link rel="icon" href="build/icon.png">
+  <title>Shibaiinu</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #1a1a2e;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- ゲームコンテナ - ShibaiinuEngineがここにHTML要素を挿入 -->
+    <div id="game-container"></div>
+  </main>
+
+  <script type="module">
+    import { ShibaiinuEngine } from './shibaiinu/engine.js';
+    import { sampleGame } from './shibaiinu/scenario/sampleGame.js';
+
+    const scenarios = [
+      {
+        id: 'sampleGame',
+        title: 'チュートリアル',
+        description: 'チュートリアル',
+        scenario: sampleGame,
+        assetsPath: 'shibaiinu/assets/system/sample_game/'
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const engine = new ShibaiinuEngine('game-container', {
+        scenarios,
+        selectSE: 'select.mp3',
+        decideSE: 'decide.mp3'
+      });
+      engine.start();
+    });
+  </script>
+</body>
+</html>
