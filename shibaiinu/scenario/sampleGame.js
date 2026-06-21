@@ -4,8 +4,8 @@ import { MessageEvent, SelectionEvent, InputEvent, WaitEvent } from '../core/eve
 export const sampleGame = new Scenario({
   "start": {
     event: new MessageEvent([
-      { bgm: "chakapoko.mp3"},
       { background: "shibaiinu_bg.png"},
+      { bgm: "chakapoko.mp3"},
       { image: "shibachan.png", imageAnim: "slide-bottom", speaker: "シバちゃん", text: "こんにちは！　[color:orange]Shibaiinu.js[/color]はシンプルなノベルゲームを作れるフレームワークだよ！" },
       { speaker: "シバちゃん", text: "[color:orange]HTML[/color]と[color:aqua]CSS[/color]と[color:yellow]JS[/color]で動いているよ！[br]難しいことはできないけれど、工夫次第でいろいろなことができるんだ！" },
       { speaker: "シバちゃん", text: "テキストは[b]太字[/b]、[shake]震え[/shake]、[color:#ff69b4]色変え[/color]、[br]ぜんぶ自由自在だよ！" },
