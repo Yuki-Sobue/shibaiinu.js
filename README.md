@@ -207,7 +207,7 @@ novel/
 
 ## 使い方
 
-シナリオの書き方、イベント定義、テキスト装飾などの詳細は **[usage.html](usage.html)** を参照してください。
+シナリオの書き方、イベント定義、テキスト装飾などの詳細は **[使い方ドキュメント](https://yuki-sobue.github.io/shibaiinu.js/usage.html)** を参照してください。
 
 `shibaiinu/scripts/setup-scenario.sh` で新規シナリオの雛形（イベントファイルとアセットディレクトリ）を一括生成できます。詳細は usage.html の「シナリオ管理スクリプト」セクションを参照してください。
 
