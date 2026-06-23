@@ -63,7 +63,8 @@ function renderEventList() {
         if (m.image === null) meta.push('img:消去');
         if (m.background === null) meta.push('bg:消去');
         const metaHtml = meta.length ? `<span class="message-meta">[${meta.join(', ')}]</span>` : '';
-        return `<div class="message-item">${speaker}<span class="message-text">${escapeHtml(m.text)}</span> ${metaHtml}</div>`;
+        const textHtml = m.text !== undefined ? `<span class="message-text">${escapeHtml(m.text)}</span> ` : '';
+        return `<div class="message-item">${speaker}${textHtml}${metaHtml}</div>`;
       }).join('');
     } else {
       contentHtml = event.choices.map((c, i) =>
